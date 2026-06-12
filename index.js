@@ -8,10 +8,11 @@ import pc from 'picocolors';
 const program = new Command();
 
 // --- Helper ฟังก์ชันสำหรับรันคำสั่ง Terminal ---
-function run(command) {
+function run(command, { throws = false } = {}) {
     try {
         return execSync(command, { encoding: 'utf8', stdio: 'pipe' }).trim();
     } catch (error) {
+        if (throws) throw error;
         return null;
     }
 }
@@ -229,15 +230,22 @@ program
 
         const s = p.spinner();
         s.start('กำลังกรองระบบเขียนประวัติศาสตร์ใหม่ย้อนหลัง (Filter-Branch)...');
-        
-        // สั่งลบประวัติแบบดุดัน
-        run(`git filter-branch --force --index-filter "git rm --cached --ignore-unmatch ${path}" --prune-empty --tag-name-filter cat -- --all`);
-        
+
+        try {
+            // -r flag จำเป็นสำหรับ directory เช่น node_modules/
+            run(`git filter-branch --force --index-filter "git rm -r --cached --ignore-unmatch ${path}" --prune-empty --tag-name-filter cat -- --all`, { throws: true });
+        } catch {
+            s.stop(pc.red('Filter-Branch ล้มเหลว!'));
+            p.log.error('❌ ไม่สามารถแก้ไข History ได้ กรุณาตรวจสอบ path ที่ระบุ');
+            return;
+        }
+
         s.message('กำลังบีบอัดและทำลายหน่วยความจำขยะ (Garbage Collection)...');
-        run('rm -rf .git/refs/original/');
+        // ใช้ git command แทน rm -rf เพื่อรองรับ Windows
+        run('git for-each-ref --format="%(refname)" refs/original/ | xargs -r git update-ref -d');
         run('git reflog expire --expire=now --all');
         run('git gc --prune=now --aggressive');
-        
+
         s.stop('ลบเกลี้ยงเรียบร้อย!');
         p.outro(pc.green(`💀 ไฟล์ [${path}] ถูกลบหายไปจากมิติประวัติศาสตร์ของ Git เรียบร้อย!`));
     });

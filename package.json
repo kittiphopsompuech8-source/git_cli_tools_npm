@@ -1,5 +1,5 @@
 {
-  "name": "git_cli_tools",
+  "name": "@kittiphop/git_cli_tools",
   "version": "1.0.0",
   "type": "module",
   "bin": {
