@@ -1,0 +1,21 @@
+{
+  "name": "git_cli_tools",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "git-pro": "./index.js"
+  },
+  "description": "**Git-Pro** คือเครื่องมือ Automation CLI (เขียนด้วย Go 100%) ที่ออกแบบมาเพื่อปฏิวัติ Workflow การทำงานกับ Git ของ Developer ช่วยจัดการและแก้ไขปัญหาทุกอย่างในเครื่องได้ในคำสั่งเดียวผ่าน **Keyboard-Driven Flow** โดยไม่ต้องสลับมือไปจับเมาส์คลิกบน Git GUI และไม่ต้องจำคำสั่ง Git ที่ซับซ้อน",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@clack/prompts": "^1.5.1",
+    "commander": "^15.0.0",
+    "picocolors": "^1.1.1"
+  }
+}
